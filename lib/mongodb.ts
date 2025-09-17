@@ -4,19 +4,15 @@ if (!process.env.MONGODB_URI) {
   throw new Error("Please define the MONGODB_URI environment variable")
 }
 
-const uri = process.env.MONGODB_URI
-let client: MongoClient
+const client = new MongoClient(process.env.MONGODB_URI)
 let clientPromise: Promise<MongoClient>
 
 if (process.env.NODE_ENV === "development") {
-  // Pour éviter de créer plusieurs clients en dev
   if (!(global as any)._mongoClientPromise) {
-    client = new MongoClient(uri)
-    ;(global as any)._mongoClientPromise = client.connect()
+    (global as any)._mongoClientPromise = client.connect()
   }
   clientPromise = (global as any)._mongoClientPromise
 } else {
-  client = new MongoClient(uri)
   clientPromise = client.connect()
 }
 
