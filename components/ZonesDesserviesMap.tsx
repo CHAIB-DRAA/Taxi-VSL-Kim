@@ -1,8 +1,8 @@
 "use client"
 
+import { useMemo } from "react"
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet"
 import L from "leaflet"
-import { useMemo, useState, useEffect } from "react"
 import "leaflet/dist/leaflet.css"
 
 type Props = {
@@ -32,18 +32,13 @@ const hospitals = [
 ]
 
 export default function ZonesDesserviesMap({ selectedZone, phoneNumber }: Props) {
-  const [isClient, setIsClient] = useState(false)
+  // Filtrer les hôpitaux selon la zone
+  const filteredHospitals = useMemo(
+    () => (selectedZone ? hospitals.filter((h) => h.zone === selectedZone) : hospitals),
+    [selectedZone]
+  )
 
-  useEffect(() => {
-    setIsClient(true)
-  }, [])
-
-  // ✅ toujours après les hooks
-  const filteredHospitals = useMemo(() => {
-    if (!selectedZone) return hospitals
-    return hospitals.filter((h) => h.zone === selectedZone)
-  }, [selectedZone])
-
+  // Icône custom
   const customIcon = useMemo(
     () =>
       new L.Icon({
@@ -55,6 +50,7 @@ export default function ZonesDesserviesMap({ selectedZone, phoneNumber }: Props)
     []
   )
 
+  // Centrer et zoomer automatiquement sur les markers
   const FitBounds = () => {
     const map = useMap()
     if (!filteredHospitals.length) return null
@@ -63,25 +59,15 @@ export default function ZonesDesserviesMap({ selectedZone, phoneNumber }: Props)
     return null
   }
 
-  // ✅ le return vient après tous les hooks
-  if (!isClient) return null
-
   return (
-    <div className="mt-10 h-[500px] w-full">
-      <MapContainer style={{ height: "100%", width: "100%" }}>
-        {/* @ts-ignore */}
+    <div className="h-[500px] w-full">
+      <MapContainer style={{ height: "100%", width: "100%" }} scrollWheelZoom={false}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         />
 
         {filteredHospitals.map((h, idx) => (
-          <Marker
-            key={idx}
-            position={[h.lat, h.lng]}
-            // @ts-ignore
-            icon={customIcon}
-          >
+          <Marker key={idx} position={[h.lat, h.lng]} icon={customIcon}>
             <Popup>
               <div className="text-left">
                 <strong>{h.name}</strong>
@@ -90,8 +76,7 @@ export default function ZonesDesserviesMap({ selectedZone, phoneNumber }: Props)
                 {phoneNumber && (
                   <>
                     <br />
-                    Taxi principal :{" "}
-                    <a href={`tel:${phoneNumber.replace(/\s/g, "")}`}>{phoneNumber}</a>
+                    Taxi principal : <a href={`tel:${phoneNumber.replace(/\s/g, "")}`}>{phoneNumber}</a>
                   </>
                 )}
               </div>

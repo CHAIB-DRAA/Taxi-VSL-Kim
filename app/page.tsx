@@ -3,11 +3,13 @@
 import { useState } from "react"
 import Link from "next/link"
 import dynamic from "next/dynamic"
+import ClientOnly from "../components/ClientOnly"
 
-// Wrapper pour s'assurer que la map ne se rend que côté client
-const ZonesDesserviesMap = dynamic(() => import("../components/ZonesDesserviesMap"), {
-  ssr: false,
-})
+// Map import dynamique pour éviter le SSR
+const ZonesDesserviesMap = dynamic(
+  () => import("../components/ZonesDesserviesMap"),
+  { ssr: false }
+)
 
 export default function Home() {
   const [selectedZone, setSelectedZone] = useState<string | null>(null)
@@ -52,7 +54,6 @@ export default function Home() {
             Conventionné CPAM/Sécurité Sociale.
           </p>
 
-          {/* Numéro CTA */}
           <div className="mb-8">
             <a
               href={`tel:${phoneNumber.replace(/\s/g, "")}`}
@@ -150,9 +151,11 @@ export default function Home() {
           </div>
 
           {/* Map côté client */}
-          <div className="rounded-xl overflow-hidden shadow-2xl border border-slate-200">
-            <ZonesDesserviesMap selectedZone={selectedZone} phoneNumber={phoneNumber} />
-          </div>
+          <ClientOnly>
+            <div className="rounded-xl overflow-hidden shadow-2xl border border-slate-200">
+              <ZonesDesserviesMap selectedZone={selectedZone} phoneNumber={phoneNumber} />
+            </div>
+          </ClientOnly>
         </div>
       </section>
     </>
