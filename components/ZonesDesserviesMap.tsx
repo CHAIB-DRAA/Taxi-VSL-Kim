@@ -7,7 +7,7 @@ import "leaflet/dist/leaflet.css"
 
 type Props = {
   selectedZone: string | null
-  phoneNumber?: string // numéro de taxi optionnel
+  phoneNumber?: string
 }
 
 // Liste des hôpitaux et cliniques avec coordonnées et téléphone
@@ -48,17 +48,18 @@ export default function ZonesDesserviesMap({ selectedZone, phoneNumber }: Props)
     []
   )
 
+  // Composant pour centrer et zoomer automatiquement sur les markers
   const FitBounds = () => {
     const map = useMap()
     if (filteredHospitals.length === 0) return null
     const bounds = L.latLngBounds(filteredHospitals.map((h) => [h.lat, h.lng]))
-    map.fitBounds(bounds, { padding: [50, 50] })
+    map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 })
     return null
   }
 
   return (
     <div className="mt-10" style={{ height: "500px", width: "100%" }}>
-      <MapContainer center={[43.6045, 1.4442]} zoom={11} style={{ height: "100%", width: "100%" }}>
+      <MapContainer style={{ height: "100%", width: "100%" }}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
