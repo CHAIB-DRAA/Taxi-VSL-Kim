@@ -7,6 +7,7 @@ import "leaflet/dist/leaflet.css"
 
 type Props = {
   selectedZone: string | null
+  phoneNumber?: string // numéro de taxi optionnel
 }
 
 // Liste des hôpitaux et cliniques avec coordonnées et téléphone
@@ -31,7 +32,7 @@ const hospitals = [
   { name: "Clinique Plaisance-du-Touch", zone: "PlaisanceDuTouch", lat: 43.6110, lng: 1.3330, phone: "0561910808" },
 ]
 
-export default function ZonesDesserviesMap({ selectedZone }: Props) {
+export default function ZonesDesserviesMap({ selectedZone, phoneNumber }: Props) {
   const filteredHospitals = useMemo(() => {
     if (!selectedZone) return hospitals
     return hospitals.filter((h) => h.zone === selectedZone)
@@ -69,6 +70,12 @@ export default function ZonesDesserviesMap({ selectedZone }: Props) {
                 <strong>{h.name}</strong>
                 <br />
                 📞 <a href={`tel:${h.phone}`}>{h.phone}</a>
+                {phoneNumber && (
+                  <>
+                    <br />
+                    Taxi : <a href={`tel:${phoneNumber}`}>{phoneNumber}</a>
+                  </>
+                )}
               </div>
             </Popup>
           </Marker>
