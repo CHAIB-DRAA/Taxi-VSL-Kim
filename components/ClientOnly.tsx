@@ -1,4 +1,3 @@
-// components/ClientOnly.tsx
 "use client"
 
 import { ReactNode, useEffect, useState } from "react"
@@ -15,5 +14,6 @@ export default function ClientOnly({ children }: Props) {
   }, [])
 
   if (!hasMounted) return null
+
   return <>{children}</>
 }
