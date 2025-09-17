@@ -62,9 +62,7 @@ export default function Home() {
             ))}
           </div>
 
-          <div className="rounded-xl overflow-hidden shadow-2xl border border-slate-200">
-            <ZonesDesserviesMap selectedZone={selectedZone} phoneNumber={phoneNumber} />
-          </div>
+         
         </div>
       </section>
     </>
