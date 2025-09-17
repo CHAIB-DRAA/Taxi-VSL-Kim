@@ -2,7 +2,7 @@
 
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet"
 import L from "leaflet"
-import { useMemo } from "react"
+import { useMemo, useState, useEffect } from "react"
 import "leaflet/dist/leaflet.css"
 
 type Props = {
@@ -32,6 +32,13 @@ const hospitals = [
 ]
 
 export default function ZonesDesserviesMap({ selectedZone, phoneNumber }: Props) {
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  // ✅ toujours après les hooks
   const filteredHospitals = useMemo(() => {
     if (!selectedZone) return hospitals
     return hospitals.filter((h) => h.zone === selectedZone)
@@ -48,7 +55,6 @@ export default function ZonesDesserviesMap({ selectedZone, phoneNumber }: Props)
     []
   )
 
-  // Composant pour centrer et zoomer automatiquement
   const FitBounds = () => {
     const map = useMap()
     if (!filteredHospitals.length) return null
@@ -57,36 +63,41 @@ export default function ZonesDesserviesMap({ selectedZone, phoneNumber }: Props)
     return null
   }
 
+  // ✅ le return vient après tous les hooks
+  if (!isClient) return null
+
   return (
     <div className="mt-10 h-[500px] w-full">
       <MapContainer style={{ height: "100%", width: "100%" }}>
-        {/* TileLayer compatible React-Leaflet v4 */}
         {/* @ts-ignore */}
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' />
-        
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        />
+
         {filteredHospitals.map((h, idx) => (
-  <Marker
-    key={idx}
-    position={[h.lat, h.lng]}
-    // TS ignore temporairement la prop icon
-    // @ts-ignore
-    icon={customIcon}
-  >
-    <Popup>
-      <div className="text-left">
-        <strong>{h.name}</strong>
-        <br />
-        📞 <a href={`tel:${h.phone.replace(/\s/g, "")}`}>{h.phone}</a>
-        {phoneNumber && (
-          <>
-            <br />
-            Taxi principal : <a href={`tel:${phoneNumber.replace(/\s/g, "")}`}>{phoneNumber}</a>
-          </>
-        )}
-      </div>
-    </Popup>
-  </Marker>
-))}
+          <Marker
+            key={idx}
+            position={[h.lat, h.lng]}
+            // @ts-ignore
+            icon={customIcon}
+          >
+            <Popup>
+              <div className="text-left">
+                <strong>{h.name}</strong>
+                <br />
+                📞 <a href={`tel:${h.phone.replace(/\s/g, "")}`}>{h.phone}</a>
+                {phoneNumber && (
+                  <>
+                    <br />
+                    Taxi principal :{" "}
+                    <a href={`tel:${phoneNumber.replace(/\s/g, "")}`}>{phoneNumber}</a>
+                  </>
+                )}
+              </div>
+            </Popup>
+          </Marker>
+        ))}
 
         <FitBounds />
       </MapContainer>
