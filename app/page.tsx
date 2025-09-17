@@ -4,7 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import dynamic from "next/dynamic"
 
-// Import dynamique => évite l'erreur "window is not defined"
+// Import dynamique pour éviter l'erreur "window is not defined"
 const ZonesDesserviesMap = dynamic(() => import("../components/ZonesDesserviesMap"), {
   ssr: false,
 })
@@ -56,7 +56,7 @@ export default function Home() {
           <div className="mb-8">
             <a
               href={`tel:${phoneNumber.replace(/\s/g, "")}`}
-              className="inline-block text-3xl md:text-4xl font-bold bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-8 py-5 rounded-xl shadow-xl transform hover:scale-105 transition-all duration-300"
+              className="inline-block text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-8 py-5 rounded-2xl shadow-2xl transform hover:scale-105 hover:shadow-red-500/50 transition-all duration-300"
             >
               📞 {phoneNumber}
             </a>
@@ -108,12 +108,12 @@ export default function Home() {
           ].map((s, i) => (
             <div
               key={i}
-              className="p-6 bg-white rounded-xl shadow-md hover:shadow-xl border hover:-translate-y-1 transform transition"
+              className="p-6 bg-white rounded-xl shadow-md hover:shadow-xl border hover:-translate-y-1 transform transition duration-300"
             >
               <img
                 src={s.img}
                 alt={s.title}
-                className="w-full h-48 object-cover rounded-lg mb-6"
+                className="w-full h-48 object-cover rounded-lg mb-6 hover:scale-105 transition-transform duration-300"
               />
               <h3 className="text-2xl font-bold mb-3 text-slate-700">{s.title}</h3>
               <p className="text-slate-600">{s.desc}</p>
@@ -138,10 +138,10 @@ export default function Home() {
               <button
                 key={zone}
                 onClick={() => setSelectedZone(zone)}
-                className={`px-6 py-3 rounded-full border font-semibold transition-all shadow-sm ${
+                className={`px-6 py-3 rounded-full border font-semibold transition-all shadow-sm hover:shadow-lg ${
                   selectedZone === zone
-                    ? "bg-blue-600 text-white shadow-lg scale-105"
-                    : "bg-white text-slate-700 hover:bg-blue-50"
+                    ? "bg-blue-600 text-white shadow-blue-500/50 scale-105"
+                    : "bg-white text-slate-700 hover:bg-blue-50 hover:text-blue-700"
                 }`}
               >
                 {zone}
@@ -150,7 +150,7 @@ export default function Home() {
           </div>
 
           {/* Map */}
-          <div className="rounded-xl overflow-hidden shadow-lg border">
+          <div className="rounded-xl overflow-hidden shadow-2xl border border-slate-200">
             <ZonesDesserviesMap selectedZone={selectedZone} phoneNumber={phoneNumber} />
           </div>
         </div>
