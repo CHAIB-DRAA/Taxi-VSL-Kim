@@ -10,7 +10,6 @@ type Props = {
   phoneNumber?: string
 }
 
-// Liste des hôpitaux et cliniques avec coordonnées et téléphone
 const hospitals = [
   { name: "Hôpital Purpan", zone: "Toulouse", lat: 43.6101, lng: 1.4423, phone: "0561900000" },
   { name: "Hôpital Rangueil", zone: "Toulouse", lat: 43.5991, lng: 1.4545, phone: "0561901111" },
@@ -44,42 +43,51 @@ export default function ZonesDesserviesMap({ selectedZone, phoneNumber }: Props)
         iconUrl: "/images/logo-marker.png",
         iconSize: [40, 40],
         iconAnchor: [20, 40],
+        popupAnchor: [0, -40],
       }),
     []
   )
 
-  // Composant pour centrer et zoomer automatiquement sur les markers
+  // Composant pour centrer et zoomer automatiquement
   const FitBounds = () => {
     const map = useMap()
-    if (filteredHospitals.length === 0) return null
-    const bounds = L.latLngBounds(filteredHospitals.map((h) => [h.lat, h.lng]))
+    if (!filteredHospitals.length) return null
+    const bounds = L.latLngBounds(filteredHospitals.map((h) => [h.lat, h.lng] as [number, number]))
     map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 })
     return null
   }
 
   return (
-    <div className="mt-10" style={{ height: "500px", width: "100%" }}>
+    <div className="mt-10 h-[500px] w-full">
       <MapContainer style={{ height: "100%", width: "100%" }}>
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
+        {/* TileLayer compatible React-Leaflet v4 */}
+        {/* @ts-ignore */}
+        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' />
+        
         {filteredHospitals.map((h, idx) => (
-          <Marker key={idx} position={[h.lat, h.lng]} icon={customIcon}>
-            <Popup>
-              <div className="text-left">
-                <strong>{h.name}</strong>
-                <br />
-                📞 <a href={`tel:${h.phone}`}>{h.phone}</a>
-                {phoneNumber && (
-                  <>
-                    <br />
-                    Taxi : <a href={`tel:${phoneNumber}`}>{phoneNumber}</a>
-                  </>
-                )}
-              </div>
-            </Popup>
-          </Marker>
-        ))}
+  <Marker
+    key={idx}
+    position={[h.lat, h.lng]}
+    // TS ignore temporairement la prop icon
+    // @ts-ignore
+    icon={customIcon}
+  >
+    <Popup>
+      <div className="text-left">
+        <strong>{h.name}</strong>
+        <br />
+        📞 <a href={`tel:${h.phone.replace(/\s/g, "")}`}>{h.phone}</a>
+        {phoneNumber && (
+          <>
+            <br />
+            Taxi principal : <a href={`tel:${phoneNumber.replace(/\s/g, "")}`}>{phoneNumber}</a>
+          </>
+        )}
+      </div>
+    </Popup>
+  </Marker>
+))}
+
         <FitBounds />
       </MapContainer>
     </div>
