@@ -1,7 +1,10 @@
 {
-  "/services/page": "app/services/page.js",
+  "/_not-found": "app/_not-found.js",
+  "/api/reservation/route": "app/api/reservation/route.js",
   "/page": "app/page.js",
+  "/reservation/page": "app/reservation/page.js",
+  "/contact/page": "app/contact/page.js",
   "/faqs/page": "app/faqs/page.js",
   "/about/page": "app/about/page.js",
-  "/reservation/page": "app/reservation/page.js"
+  "/services/page": "app/services/page.js"
 }
