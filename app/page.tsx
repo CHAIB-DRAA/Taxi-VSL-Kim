@@ -4,7 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import dynamic from "next/dynamic"
 
-// Import dynamique pour éviter l'erreur "window is not defined"
+// Wrapper pour s'assurer que la map ne se rend que côté client
 const ZonesDesserviesMap = dynamic(() => import("../components/ZonesDesserviesMap"), {
   ssr: false,
 })
@@ -149,7 +149,7 @@ export default function Home() {
             ))}
           </div>
 
-          {/* Map */}
+          {/* Map côté client */}
           <div className="rounded-xl overflow-hidden shadow-2xl border border-slate-200">
             <ZonesDesserviesMap selectedZone={selectedZone} phoneNumber={phoneNumber} />
           </div>
