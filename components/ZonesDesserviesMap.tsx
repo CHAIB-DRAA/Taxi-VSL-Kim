@@ -62,7 +62,6 @@ export default function ZonesDesserviesMap({ selectedZone, phoneNumber }: Props)
       <MapContainer style={{ height: "100%", width: "100%" }}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         />
         {filteredHospitals.map((h, idx) => (
           <Marker key={idx} position={[h.lat, h.lng]} icon={customIcon}>

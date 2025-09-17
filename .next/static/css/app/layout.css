@@ -605,6 +605,9 @@ video {
 .h-\[50vh\] {
   height: 50vh;
 }
+.h-\[500px\] {
+  height: 500px;
+}
 .min-h-\[70vh\] {
   min-height: 70vh;
 }
