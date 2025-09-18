@@ -1,34 +1,37 @@
-import nodemailer from 'nodemailer'
+import nodemailer from "nodemailer"
 
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT || 587),
-  secure: false,
+  host: process.env.MAILTRAP_HOST, // ex: "smtp.mailtrap.io"
+  port: Number(process.env.MAILTRAP_PORT), // ex: 2525
   auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS
-  }
+    user: process.env.MAILTRAP_USER,
+    pass: process.env.MAILTRAP_PASS,
+  },
 })
 
-export default async function sendReservationMail(data: any){
-  if(!process.env.ADMIN_EMAIL) return
-  const html = `
-    <h2>Nouvelle réservation - Taxi VSL</h2>
-    <ul>
-      <li>Nom: ${data.nom} ${data.prenom || ''}</li>
-      <li>Téléphone: ${data.telephone}</li>
-      <li>Email: ${data.email || ''}</li>
-      <li>Date: ${data.date} ${data.heure}</li>
-      <li>Départ: ${data.depart}</li>
-      <li>Arrivée: ${data.arrivee}</li>
-      <li>Motif: ${data.motif}</li>
-    </ul>
-  `
+type ReservationData = {
+  nom: string
+  telephone: string
+  email: string
+  status?: string
+}
 
-  await transporter.sendMail({
-    from: process.env.SMTP_USER,
-    to: process.env.ADMIN_EMAIL,
-    subject: 'Nouvelle réservation Taxi VSL',
-    html
-  })
+export default async function sendReservationMail(data: ReservationData) {
+  const { nom, email, status, telephone } = data
+
+  const statusText = status === "Confirmé" ? "confirmée" : status === "Annulé" ? "annulée" : "créée"
+
+  const mailOptions = {
+    from: `"Taxi VSL" <no-reply@taxivsl.com>`,
+    to: email,
+    subject: `Votre réservation a été ${statusText}`,
+    text: `Bonjour ${nom},\n\nVotre réservation a été ${statusText}.\nTéléphone: ${telephone}`,
+  }
+
+  try {
+    await transporter.sendMail(mailOptions)
+    console.log("Mail envoyé à", email)
+  } catch (err) {
+    console.error("Erreur d'envoi du mail :", err)
+  }
 }
